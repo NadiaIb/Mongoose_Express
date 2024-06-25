@@ -5,8 +5,10 @@ const mongoose = require("mongoose");
 
 const Product = require("./models/product"); // require in product schema and model created
 
+//MIDDLEWARE
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 
 //CONNECT TO MONGO
 main().catch((err) => console.log("Mongo connection error!", err));
@@ -20,6 +22,18 @@ app.get("/products", async (req, res) => {
   // returns thenable(promise like thing) so await response
   const products = await Product.find({});
   res.render("products/index", { products }); // looks into views/products/index, passes {products} info to ejs file
+});
+
+app.get("/products/new", (req, res) => {
+  res.render("products/new");
+});
+
+app.post("/products", async (req, res) => {
+  // req.body will be undefined, needs to be parsed - add app.use(express.urlencoded({ extended: true })) middleware
+  const newProduct = new Product(req.body);
+  await newProduct.save();
+  console.log(newProduct);
+  res.redirect(`/products/${newProduct._id}`);
 });
 
 app.get("/products/:id", async (req, res) => {
