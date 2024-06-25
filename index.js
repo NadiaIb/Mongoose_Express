@@ -17,9 +17,11 @@ async function main() {
 }
 
 
-// app.get("/dog", (req, res) => {
-//   res.send("woof");
-// });
+app.get("/products", async (req, res) => {
+  // returns thenable(promise like thing) so await response
+  const products = await Product.find({}) 
+  res.render("products/index", {products}); // looks into views/products/index, passes {products} info to ejs file
+});
 
 app.listen(3000, () => {
   console.log("APP LISTENING ON PORT 30000");
