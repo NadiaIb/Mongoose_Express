@@ -13,13 +13,18 @@
       <input id="name" type="text" name="name" placeholder="product name" />
 
       <label for="price">Price: </label>
-      <input id="price" type="number" name="price" placeholder="product price" />
+      <input
+        id="price"
+        type="number"
+        name="price"
+        placeholder="product price"
+      />
 
       <label for="category">Select Category: </label>
       <select name="category" id="category">
-        <option value="fruit">fruit</option>
-        <option value="vegetable">vegetable</option>
-        <option value="dairy">dairy</option>
+        <%= for (let category of categories){ %>
+        <option value="<%=category%>"><%=category %></option>
+        <% } %>
       </select>
       <button>Add Product</button>
     </form>
