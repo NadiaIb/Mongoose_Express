@@ -13,6 +13,14 @@
     </ul>
     <a href="/products">All Products</a>
     <a href="/products/<%=product._id%>/edit">Edit Products</a>
-
+    <form
+      action="/products/<%=product._id%>?_method=DELETE"
+      method="POST"
+    ><button>Delete</button></form>
+    <!-- WE CAN ONLY DO GET OR POST REQ ON HTML SO USE METHOD OVERRRIDE -->
   </body>
 </html>
+
+
+
+<a href="http://"></a>
