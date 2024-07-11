@@ -5,8 +5,7 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 
 const Product = require("./models/product"); // require in product schema and model created
-
-const categories = Product.schema.obj.category.enum; //gives list of categories, for the category select to be prefilled on edit page
+const Farm = require("./models/farm");
 
 //MIDDLEWARE
 app.set("views", path.join(__dirname, "views"));
@@ -21,16 +20,36 @@ async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/farmStand");
   console.log("Mongo connection open");
 }
+//FARM ROUTES
+app.get("/farms", async (req, res) => {
+  // farm post will redirect to this
+  const farms = await Farm.find({});
+  res.render("farms/index", { farms });
+});
+
+app.get("/farms/new", (req, res) => {
+  res.render("farms/new");
+});
+
+app.post("/farms", async (req, res) => {
+  //making a new model with farm info so it is async
+  const farm = new Farm(req.body);
+  await farm.save();
+  res.redirect("/farms");
+});
+
+//PRODUCTS ROUTE
+const categories = Product.schema.obj.category.enum; //gives list of categories, for the category select to be prefilled on edit page
 
 app.get("/products", async (req, res) => {
   // returns thenable(promise like thing) so await response
   const { category } = req.query;
-  if(category){
-    const products = await Product.find({category});
+  if (category) {
+    const products = await Product.find({ category });
     res.render("products/index", { products, category }); // looks into views/products/index, passes {products} info to ejs file
-  }else{
+  } else {
     const products = await Product.find({});
-    res.render("products/index", { products, category:'All' });
+    res.render("products/index", { products, category: "All" });
   }
 });
 
