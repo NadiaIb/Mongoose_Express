@@ -32,11 +32,10 @@ app.get("/farms/new", (req, res) => {
 });
 
 // id route has to be AFTER new as mongoose will treat /new as id
-
-app.get('/farms/:id', async(req,res)=>{
-  const farm = await Farm.findById(req.params.id)
-  res.render('farms/details', {farm})
-})
+app.get("/farms/:id", async (req, res) => {
+  const farm = await Farm.findById(req.params.id);
+  res.render("farms/details", { farm });
+});
 
 app.post("/farms", async (req, res) => {
   //making a new model with farm info so it is async
@@ -45,6 +44,22 @@ app.post("/farms", async (req, res) => {
   res.redirect("/farms");
 });
 
+app.get("/farms/:id/products/new", (req, res) => {
+  const { id } = req.params;
+  res.render("products/new", { categories, id });
+});
+
+app.post("/farms/:id/products", async (req, res) => {
+  const { id } = req.params;
+  const farm = await Farm.findById(id);
+  const { name, price, category } = req.body;
+  const product = new Product({ name, price, category });
+  farm.products.push(product); // push products from req.body onto farm.products defined in schema
+  product.farm = farm; //  product.farm set out in schema = farm created
+  await farm.save()
+  await product.save()
+  res.send(farm);
+});
 
 //PRODUCTS ROUTE
 const categories = Product.schema.obj.category.enum; //gives list of categories, for the category select to be prefilled on edit page
