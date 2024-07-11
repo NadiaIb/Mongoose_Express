@@ -31,12 +31,20 @@ app.get("/farms/new", (req, res) => {
   res.render("farms/new");
 });
 
+// id route has to be AFTER new as mongoose will treat /new as id
+
+app.get('/farms/:id', async(req,res)=>{
+  const farm = await Farm.findById(req.params.id)
+  res.render('farms/details', {farm})
+})
+
 app.post("/farms", async (req, res) => {
   //making a new model with farm info so it is async
   const farm = new Farm(req.body);
   await farm.save();
   res.redirect("/farms");
 });
+
 
 //PRODUCTS ROUTE
 const categories = Product.schema.obj.category.enum; //gives list of categories, for the category select to be prefilled on edit page
