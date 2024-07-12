@@ -33,7 +33,7 @@ app.get("/farms/new", (req, res) => {
 
 // id route has to be AFTER new as mongoose will treat /new as id
 app.get("/farms/:id", async (req, res) => {
-  const farm = await Farm.findById(req.params.id);
+  const farm = await Farm.findById(req.params.id).populate("products");
   res.render("farms/details", { farm });
 });
 
@@ -44,9 +44,10 @@ app.post("/farms", async (req, res) => {
   res.redirect("/farms");
 });
 
-app.get("/farms/:id/products/new", (req, res) => {
+app.get("/farms/:id/products/new", async (req, res) => {
   const { id } = req.params;
-  res.render("products/new", { categories, id });
+  const farm = await Farm.findById(id);
+  res.render("products/new", { categories, farm });
 });
 
 app.post("/farms/:id/products", async (req, res) => {
@@ -56,9 +57,9 @@ app.post("/farms/:id/products", async (req, res) => {
   const product = new Product({ name, price, category });
   farm.products.push(product); // push products from req.body onto farm.products defined in schema
   product.farm = farm; //  product.farm set out in schema = farm created
-  await farm.save()
-  await product.save()
-  res.send(farm);
+  await farm.save();
+  await product.save();
+  res.redirect(`/farms/${id}`);
 });
 
 //PRODUCTS ROUTE
@@ -90,7 +91,8 @@ app.post("/products", async (req, res) => {
 
 app.get("/products/:id", async (req, res) => {
   const { id } = req.params;
-  const product = await Product.findById(id); // findById = mongoose method
+  const product = await Product.findById(id).populate('farm','name') // findById = mongoose method
+  console.log(product)
   // console.log(product);
   res.render("products/details", { product });
 });
