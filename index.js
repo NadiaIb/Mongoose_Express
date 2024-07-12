@@ -62,6 +62,11 @@ app.post("/farms/:id/products", async (req, res) => {
   res.redirect(`/farms/${id}`);
 });
 
+app.delete('/farms/:id',async(req,res)=>{
+  const farm = await Farm.findByIdAndDelete(req.params.id)
+  res.redirect('/farms')
+})
+
 //PRODUCTS ROUTE
 const categories = Product.schema.obj.category.enum; //gives list of categories, for the category select to be prefilled on edit page
 
